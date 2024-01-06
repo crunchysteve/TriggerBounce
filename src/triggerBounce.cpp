@@ -1,20 +1,11 @@
 /*
     ARDUINO TRIGGER BOUNCE by CRUNCHYSTEVE, shinyhappyrainbows.com
     ©2023 Crunchysteve filthynoisesmusic@gmail.com
-    Takes a falling edge trigger input and creates a fixed width pulse that 
-    can't be retriggered until after the output pulse the next falling edge.
+    Takes a falling or rising edge trigger input & creates a fixed width pulse 
+    that can't be retriggered until after the output pulse the next falling edge.
     The pulsewidth is set by the "period" variable, input is on digital pin 2 
-    and output is on digital pin 13. It needs no external libraries, all timing
-    is completely non-blocking and all code is pure C.
-
-    - Licence: Australian law requires me to retain my Moral Rights, 
-               as asserted by the copyright notice above, so...
-    This code is on a modified MIT licence, the modification is that it's free 
-    to use on an individual by individual basis but, if you are using it in a mass 
-    production context, please contact me, at the address above, to negotiate a 
-    commercial licence. You'll find I'm quite reasonable and not greedy, but the 
-    free licence will remain for hobbyists & makers and is separate from any 
-    commercial agreement, and this part cannot be negotiated away.
+    & output is on digital pin 13. It needs no external libraries, all timing is 
+    completely non-blocking & all code is pure C. See lICENCE.md for usage terms.
 */
 
 #include "Arduino.h"
