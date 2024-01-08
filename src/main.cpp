@@ -6,6 +6,7 @@
     The pulsewidth is set by the "period" variable, input is on digital pin 2 
     & output is on digital pin 13. It needs no external libraries, all timing is 
     completely non-blocking & all code is pure C. See lICENCE.md for usage terms.
+    (Project now ready for release.)
 */
 
 #include <Arduino.h>
