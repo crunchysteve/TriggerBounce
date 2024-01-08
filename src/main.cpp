@@ -19,7 +19,7 @@ Chrono pulsewidth;
 
 //  Trigger input and output pins
 #define INPUT_PIN         2               //  Set trigger input pin to D2
-#define OUTPUT_PIN       13               //  Set LED output pin    to D13
+#define OUTPUT_PIN       13               //  Set pulse output pin to LED pin, D13 (visibility)
 //  If falling edge(s) permanently needed, short either or both pins to ground.
 #define IN_SWITCH         4               //  Set Input polarity switch to D4 - No switch = rising only.
 #define OUT_SWITCH        7               //  Set Input polarity switch to D7 - No switch = rising only.
@@ -30,15 +30,18 @@ bool      inEdge       = true;            //  "true" = rising edge, "false" = fa
 bool      outEdge      = true;            //  "true" = rising edge, "false" = falling edge
 bool      pulseState   = LOW;             //  input trigger state rest state is opposite
 bool      testCon      = false;           //  Variable to store last input state
+bool      triggered    = false;           //  Variable to store whether the pulse is live
 
 uint32_t  rightNow     =   0;             //  Set pulse width timer comparison variable
 uint32_t  backThen     =   0;             //  Set pulse width timer start variable
-uint32_t  period       =  26;             //  Length of output pulse width in milliseconds
+uint32_t  period       =  20;             //  Length of output pulse width in milliseconds
                                           //  (Can be longer: is set to timing of 16s at 285BPM)
+
 void setup(){
+  Serial.begin(115200);
   //  set fast analogRead (1uS) as per https://www.gammon.com.au/adc
   ADCSRA &= ~(bit (ADPS0) | bit (ADPS1) | bit (ADPS2));   //  clear analogRead prescaler defaults
-  ADCSRA |= bit (ADPS2);                  //  set at 6.5uS analogRead() time, instead of 104uS,
+  ADCSRA |= bit (ADPS2);                  //  set to 6.5uS analogRead() time, instead of 104uS,
                                           //  to significantly reduce latency of reading A0.
                                           //  (Also reduces accuracy, but not entirely needed for
                                           //  a potentiometer read to set the pulsewidth.)
@@ -50,6 +53,8 @@ void setup(){
     //  as rising edge (default) or falling edge. Can be individually set with 
     //  2x SPST switches or both can be set the same, using 1x DPST switch.
   pulsewidth.start();
+  Serial.println("Hello World");  //  Setup complete
+  Serial.println("...........");  //  Just some decoration after the message
 }
 
 void loop(){
@@ -66,20 +71,25 @@ void loop(){
   }
 
   //  Internal logic only detects rising edges, hence above "if/else."
-  if(input != testCon && !pulsewidth.isRunning()){  //  Detect any edge and act...
-                                                    //  only if timer is stopped.
+  if(input != testCon && !triggered){                   //  Detect any edge and act only...
+                                          //  if timer is stopped.
     if(input == HIGH && !pulseState){     //  Act only for a rising edge AND...
                                           //  if LED state is not triggered...
       pulseState = HIGH;                  //  then trigger LED state and...
+      triggered = true;                   //  timer is triggered
       pulsewidth.start();                 //  start the pulse timer.
+      Serial.print(" on...");
     }
     testCon = input;                      //  Store input as testCon for all 
                                           //  detected edges.
+    delay(5);                             //  debounce delay
   }
 
-  if(pulsewidth.hasPassed(period) && pulseState){   //  detect timer if state is HIGH
+  if(pulsewidth.hasPassed(period) && triggered){   //  detect timer if triggered is HIGH
     pulseState = LOW;                     //  if above is true, turn off pulse and...
-    pulsewidth.stop();                    //  stop timer
+    triggered = false;                    //  timer is no longer triggered, so...
+    pulsewidth.stop();                    //  stop the timer
+    Serial.println(" and off.");
   }
 
   //  Convert internal logic to rising or falling edge, as per switches.
