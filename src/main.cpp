@@ -8,7 +8,10 @@
     completely non-blocking & all code is pure C. See lICENCE.md for usage terms.
 */
 
-#include "Arduino.h"
+#include <Arduino.h>
+#include <Chrono.h>
+
+Chrono pulsewidth;
 
 //  Trigger input and output pins
 #define INPUT_PIN         2               //  Set trigger input pin to D2
@@ -21,8 +24,8 @@
 
 bool      inEdge       = true;            //  "true" = rising edge, "false" = falling edge
 bool      outEdge      = true;            //  "true" = rising edge, "false" = falling edge
-bool      state        = LOW;             //  input trigger state rest state is opposite
-bool      test         = false;           //  Variable to store last input state
+bool      pulseState   = LOW;             //  input trigger state rest state is opposite
+bool      testCon      = false;           //  Variable to store last input state
 
 uint32_t  rightNow     =   0;             //  Set pulse width timer comparison variable
 uint32_t  backThen     =   0;             //  Set pulse width timer start variable
@@ -33,6 +36,8 @@ void setup(){
   ADCSRA &= ~(bit (ADPS0) | bit (ADPS1) | bit (ADPS2));   //  clear analogRead prescaler defaults
   ADCSRA |= bit (ADPS2);                  //  set at 6.5uS analogRead() time, instead of 104uS,
                                           //  to significantly reduce latency of reading A0.
+                                          //  (Also reduces accuracy, but not entirely needed for
+                                          //  a potentiometer read to set the pulsewidth.)
   pinMode(IN_SWITCH,INPUT_PULLUP);        //  Input polarity switch set as INPUT_PULLUP)
   pinMode(INPUT_PIN, INPUT_PULLUP);       //  set trigger input MODE as INPUT_PULLUP
   pinMode(OUT_SWITCH,INPUT_PULLUP);       //  Output polarity switch set as INPUT_PULLUP)
@@ -40,6 +45,7 @@ void setup(){
     //  IN_SWITCH and OUT_SWITCH set the input and/or output active state polarities,
     //  as rising edge (default) or falling edge. Can be individually set with 
     //  2x SPST switches or both can be set the same, using 1x DPST switch.
+  pulsewidth.start();
 }
 
 void loop(){
@@ -47,36 +53,41 @@ void loop(){
   if(IN_SWITCH){inEdge = false;} else {inEdge = true;}    //  Set input edge.
   if(OUT_SWITCH){outEdge = false;} else {outEdge = true;} //  Set output edge.
 
-  //  Detect working input edge settings and detect a triggering edge.
+  //  Read input, as per switches, and detect a triggering edge.
   bool input;                             
-  if(inEdge){                            //  Get edge state of INPUT_PIN...
-    input = digitalRead(INPUT_PIN);       //  (default ->) for rising edge or
+  if(inEdge){                             //  Get edge state of INPUT_PIN...
+    input = digitalRead(INPUT_PIN);       //  (default ->) for rising edge or...
   } else {
-    input = !digitalRead(INPUT_PIN);      //  for falling edge.
-  }
-  if(input != test){                      //  Detect rising edges...
-    if(input == HIGH &&                   //  Detect only if rising edge AND
-       state == LOW){                     //  LED state is not triggered, then
-      state = HIGH;                       //  trigger LED state and
-      backThen = millis();                //  initialise pulse timer start time.
-    }
-    test = input;                         //  Store this input edge state.
-  }
-  //  Timeout last triggered edge.
-  rightNow = millis();                    //  Measure time "now."
-  if(              state == HIGH &&       //  If LED is HIGH and
-     rightNow - backThen >= period){      //  if pulse timer has elapsed by period then
-    state = LOW;                          //  set LED to off.
+    input = !digitalRead(INPUT_PIN);      //  invert logic for falling edge.
   }
 
-  //  Detect active rising/falling pulse state of output and set required state
+  //  Internal logic only detects rising edges, hence above "if/else."
+  if(input != testCon && !pulsewidth.isRunning()){  //  Detect any edge and act...
+                                                    //  only if timer is stopped.
+    if(input == HIGH && !pulseState){     //  Act only for a rising edge AND...
+                                          //  if LED state is not triggered...
+      pulseState = HIGH;                  //  then trigger LED state and...
+      pulsewidth.start();                 //  start the pulse timer.
+    }
+    testCon = input;                      //  Store input as testCon for all 
+                                          //  detected edges.
+  }
+
+  if(pulsewidth.hasPassed(period) && pulseState){   //  detect timer if state is HIGH
+    pulseState = LOW;                     //  if above is true, turn off pulse and...
+    pulsewidth.stop();                    //  stop timer
+  }
+
+  //  Convert internal logic to rising or falling edge, as per switches.
   if(outEdge){
-    digitalWrite(OUTPUT_PIN,state);       //  (default ->) Write LED state to OUTPUT_PIN for "period" mS
+    digitalWrite(OUTPUT_PIN,pulseState);       //  (default ->) Write LED state to OUTPUT_PIN for "period" mS
   } else {
-    digitalWrite(OUTPUT_PIN,!state);      //  Write LED invert-state to OUTPUT_PIN for "period" mS.
+    digitalWrite(OUTPUT_PIN,!pulseState);      //  Write LED invert-state to OUTPUT_PIN for "period" mS.
   }
 
   //  If potentiometer state has changed, set new period.
-  uint32_t potRead = map(analogRead(POT_PIN),0,1023,20,800);   //  Get potentiometer value, map to useful
-  if(period != potRead) period = potRead;                 //  range and, if different, update period.
+  //  Get potentiometer value, map to useful range and...
+  uint32_t potRead = map(analogRead(POT_PIN),0,1023,20,800);  //  (output range = mS)
+  //  if potentiometer map value different, update period value.
+  if(period != potRead) period = potRead;
 }
