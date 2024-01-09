@@ -14,28 +14,9 @@
 #include <Arduino.h>
 #include <Chrono.h>   //  Uses the amazing Chrono library by Sofian Audry and 
                       //  Thomas Ouellet Fredericks:- https://github.com/SofaPirate/Chrono/
+#include <data.h>     //  Program data, declarations, constants and variables
 
 Chrono pulsewidth;
-
-//  Trigger input and output pins
-#define INPUT_PIN         2               //  Set trigger input pin to D2
-#define OUTPUT_PIN       13               //  Set pulse output pin to LED pin, D13 (visibility)
-//  If falling edge(s) permanently needed, short either or both pins to ground.
-#define IN_SWITCH         4               //  Set Input polarity switch to D4 - No switch = rising only.
-#define OUT_SWITCH        7               //  Set Input polarity switch to D7 - No switch = rising only.
-//  Optional potentiometer for setting pulsewidth value, "period".
-#define POT_PIN          A0               //  Set analog pin used for pulsewidth pot
-
-bool      inEdge       = true;            //  "true" = rising edge, "false" = falling edge
-bool      outEdge      = true;            //  "true" = rising edge, "false" = falling edge
-bool      pulseState   = LOW;             //  input trigger state rest state is opposite
-bool      testCon      = false;           //  Variable to store last input state
-bool      triggered    = false;           //  Variable to store whether the pulse is live
-
-uint32_t  rightNow     =   0;             //  Set pulse width timer comparison variable
-uint32_t  backThen     =   0;             //  Set pulse width timer start variable
-uint32_t  period       =  20;             //  Length of output pulse width in milliseconds
-                                          //  (Can be longer: is set to timing of 16s at 285BPM)
 
 void setup(){
   Serial.begin(115200);
@@ -53,8 +34,6 @@ void setup(){
     //  as rising edge (default) or falling edge. Can be individually set with 
     //  2x SPST switches or both can be set the same, using 1x DPST switch.
   pulsewidth.start();
-  Serial.println("Hello World");  //  Setup complete
-  Serial.println("...........");  //  Just some decoration after the message
 }
 
 void loop(){
@@ -78,18 +57,16 @@ void loop(){
       pulseState = HIGH;                  //  then trigger LED state and...
       triggered = true;                   //  timer is triggered
       pulsewidth.start();                 //  start the pulse timer.
-      Serial.print(" on...");
     }
     testCon = input;                      //  Store input as testCon for all 
                                           //  detected edges.
-    delay(5);                             //  debounce delay
+    delay(DEBOUNCE_DLY);                  //  default debounce delay
   }
 
   if(pulsewidth.hasPassed(period) && triggered){   //  detect timer if triggered is HIGH
     pulseState = LOW;                     //  if above is true, turn off pulse and...
     triggered = false;                    //  timer is no longer triggered, so...
     pulsewidth.stop();                    //  stop the timer
-    Serial.println(" and off.");
   }
 
   //  Convert internal logic to rising or falling edge, as per switches.
@@ -101,7 +78,8 @@ void loop(){
 
   //  If potentiometer state has changed, set new period.
   //  Get potentiometer value, map to useful range and...
-  uint32_t potRead = map(analogRead(POT_PIN),0,1023,20,800);  //  (output range = mS)
+  uint32_t potRead = map(analogRead(POT_PIN),POT_MIN,POT_MAX,MAP_MIN,MAP_MAX);
+                                               //  (^ map output range = 20 to 1043 mS)
   //  if potentiometer map value different, update period value.
   if(period != potRead) period = potRead;
 }
