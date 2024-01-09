@@ -16,7 +16,7 @@
 #define MAP_MIN          20               //  Set potentiometer minimum read value
 #define MAP_MAX        1043               //  Set potentiometer minimum read value
 //  Other functional configuration values
-#define DEBOUNCE_DLY      5               //  Debounce delay in edge test
+#define DEBOUNCE_DLY      2               //  Debounce delay in edge test
 
 //  PROGRAM VARIABLES
 //  Booleans
