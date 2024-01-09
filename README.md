@@ -55,6 +55,11 @@ width pulse with a set period.```
 
 ***BINGO!***
 
+Guess I know how I'm going to do code analysis ```:-)``` Twinny's code 
+completion is OK, but slow. Twinny's instruction chatbot? Meh. I'll use 
+the code completion because it's cheaper than GitHub Copilot. I'll use the 
+terminal and Ollama for review and gudance.
+
 ## News 20240109
 
 Great news everybody! The code works! Below is a screenshot of my logic analyser traces for input (top trace), a 20% duty cycle square wave and default falling edge trigger input, while the output (bottom trace) shows a width constrained, falling edge output that isn't retriggered until the input has gone high, then fallen again. Perfect!
