@@ -25,7 +25,8 @@ Of course, I'm using the "LED state" (as Twinny called it) to control pin 13 bec
 
 Doing the same thing directly with Ollama in the command line with ```ollama run llama2 "Summarize this file: $(cat /Users/steve/GitHub/TriggerBounce/TriggerBounce/src/main.cpp)"``` renders...
 
-```...Arduino code for creating a pulse generator that
+```
+...Arduino code for creating a pulse generator that
 can produce a fixed width pulse triggered by a falling or rising edge of 
 an input signal. The pulse width is set using a variable called `period`.
 
