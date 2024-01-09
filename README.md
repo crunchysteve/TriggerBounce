@@ -42,7 +42,7 @@ Doing the same thing directly with Ollama in the command line with ```ollama run
 ***BINGO!***
 
 Guess I know how I'm going to do code analysis ```:-)``` Twinny's code completion is OK, but slow. Twinny's instruction chatbot? Meh. I'll use the code completion because it's cheaper than GitHub Copilot. I'll use the terminal and Ollama for review and gudance. Yeah, I'm finding my way around new tools, but feel free to use the second AI summary, it's ***EXACTLY*** what I wanted to achieve.
-<br />
+<hr />
 
 ## News 20240109
 
