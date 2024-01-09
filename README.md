@@ -38,7 +38,8 @@ The code includes the following components:
 
 The code first initializes the input and output pins, sets the analog read time to 6.5uS, and defines some constants and variables. It then enters a loop where it reads the input pin, detects edges, and triggers the pulse timer if an edge is detected and the `period` variable has been set. The pulse width is determined by the `period` variable, and the code checks for changes in the potentiometer value and updates the `period` variable accordingly.
 
-Overall, this code seems to be designed to create a simple pulse generator that can be controlled by an external input signal and can produce a fixed width pulse with a set period.```
+Overall, this code seems to be designed to create a simple pulse generator that can be controlled by an external input signal and can produce a fixed width pulse with a set period.
+```
 
 ***BINGO!***
 
