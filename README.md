@@ -48,7 +48,7 @@ Guess I know how I'm going to do code analysis ```:-)``` Twinny's code completio
 Great news everybody! The code works! Below is a screenshot of my logic analyser traces for input (top trace), a 20% duty cycle square wave and default falling edge trigger input, while the output (bottom trace) shows a width constrained, falling edge output that isn't retriggered until the input has gone high, then fallen again. Perfect!
 ![Test results on my logic analyser.](https://github.com/crunchysteve/TriggerBounce/assets/46626696/32e34c1d-273d-4641-a9f4-6fea1dc45a39)
 
-Neaxt will come some basic electronic circuit diagrams that are needed for the crude prototype of my "top secret guitar pedal," then, a more refined circuit and fritzing project for hardware version 1 as a Eurorack module. Don't hold me to deadlines, as I'm reorganising a few projects at the moment, as well as doing quite a bit of self-paced learning and still need time for my peoples IRL. I don't do this for a living, although I wouldn't mind that too much, so long as it stayed niche... and wholely, solely owned.
+Next will come some basic electronic circuit diagrams that are needed for the crude prototype of my "top secret guitar pedal," then, a more refined circuit and fritzing project for hardware version 1 as a Eurorack module. Don't hold me to deadlines, as I'm reorganising a few projects at the moment, as well as doing quite a bit of self-paced learning and still need time for my peoples IRL. I don't do this for a living, although I wouldn't mind that too much, so long as it stayed niche... and wholely, solely owned.
 
 <hr />
 
