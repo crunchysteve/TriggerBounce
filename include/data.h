@@ -2,7 +2,7 @@
 
 #ifndef DATA_H
 #define DATA_H
-// ***HARDWIRED VALUES*** //
+// ***"HARDWIRED" PROGRAM MACRO VALUES*** //
 //  Trigger input and output pins
 #define INPUT_PIN         2               //  Set trigger input pin to D2
 #define OUTPUT_PIN       13               //  Set pulse output pin to LED pin, D13 (visibility)
@@ -18,13 +18,16 @@
 //  Other functional configuration values
 #define DEBOUNCE_DLY      5               //  Debounce delay in edge test
 
-//  Programe Variables
+//  PROGRAM VARIABLES
 //  Booleans
 bool      inEdge       = true;            //  "true" = rising edge, "false" = falling edge
 bool      outEdge      = true;            //  "true" = rising edge, "false" = falling edge
-bool      pulseState   = LOW;             //  input trigger state rest state is opposite
+                                          //  Set to "true" for internal logic. INPUT_PULLUP
+                                          //  and switches set the input and output edges.
+
+bool      pulseState   = LOW;             //  Variable sets output value at given trigger states
 bool      testCon      = false;           //  Variable to store last input state
-bool      triggered    = false;           //  Variable to store whether the pulse is live
+bool      triggered    = false;           //  Variable to store whether the pulse has been triggered
 
 //  32 bit, unsigned timing integers (eg unsigned long values but use fewer characters to declare)
 uint32_t  rightNow     =   0;             //  Set pulse width timer comparison variable
