@@ -15,6 +15,12 @@ Above is the circuit diagram for triggerBounce.ino projects. Add switches to pin
 
 TriggerBounce uses the Chrono library, by Sofian Audry and Thomas Ouellet Fredericks. Find it at [https://github.com/SofaPirate/Chrono](https://github.com/SofaPirate/Chrono), load it into ArduinoIDE with the Library Manager or load it in VSCode/PlatformIO via your project's platformio.ini file.
 
+My vscode code complition assistant, Twinny, using an offline AI, Ollama, describes the function of tho code thus...
+
+```...you're using the Chrono library to measure the time between trigger events and control the LED state. The setup function configures the input pins, sets up the Chrono timer, and starts it. The loop function then reads the potentiometer and updates the period value if it changes. If the pulsewidth has passed since the last trigger event and the LED is on, the code turns it off and stops the timer. Otherwise, it simply waits for the next trigger event to occur.```
+
+```The input polarity switches are used to determine whether the rising or falling edge of the input signal should be counted as a trigger. The output polarity switches are used to determine whether the LED is controlled by the rising or falling edge of the pulsewidth timer...```
+
 ## News 20240109
 
 Great news everybody! The code works! Below is a screenshot of my logic analyser traces for input (top trace), a 20% duty cycle square wave and default falling edge trigger input, while the output (bottom trace) shows a width constrained, falling edge output that isn't retriggered until the input has gone high, then fallen again. Perfect!
