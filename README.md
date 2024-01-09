@@ -21,6 +21,8 @@ My vscode code complition assistant, Twinny, using an offline AI, Ollama, descri
 
 ```The input polarity switches are used to determine whether the rising or falling edge of the input signal should be counted as a trigger. The output polarity switches are used to determine whether the LED is controlled by the rising or falling edge of the pulsewidth timer...```
 
+Of course, I'm using the "LED state" (as Twinny called it) to control pin 13 because that gives an easy, onboard visual display of whether the output has been triggered. (An off-flash, or "blink.") I'd seriously love it if I could give Ollama read-only access to code files via Twinny. If anybody knows of a way to do this with Tinny in PlatformIO, please open an issue! Otherwise, copying and pasting the code into Twinny's chat box works. Don't ask Ollama to describe your code in the command line, with a file path, the app "trips balls," making up stuff about all sorts of crazy apps.
+
 ## News 20240109
 
 Great news everybody! The code works! Below is a screenshot of my logic analyser traces for input (top trace), a 20% duty cycle square wave and default falling edge trigger input, while the output (bottom trace) shows a width constrained, falling edge output that isn't retriggered until the input has gone high, then fallen again. Perfect!
