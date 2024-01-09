@@ -23,6 +23,38 @@ My vscode code complition assistant, Twinny, using an offline AI, Ollama, descri
 
 Of course, I'm using the "LED state" (as Twinny called it) to control pin 13 because that gives an easy, onboard visual display of whether the output has been triggered. (An off-flash, or "blink.") I'd seriously love it if I could give Ollama read-only access to code files via Twinny. If anybody knows of a way to do this with Tinny in PlatformIO, please open an issue! Otherwise, copying and pasting the code into Twinny's chat box works. Don't ask Ollama to describe your code in the command line, with a file path, the app "trips balls," making up stuff about all sorts of crazy apps.
 
+Doing the same thing directly with Ollama in the command line with ```ollama run llama2 "Summarize this file: $(cat /Users/steve/GitHub/TriggerBounce/TriggerBounce/src/main.cpp)"``` renders...
+
+```...Arduino code for creating a pulse generator that
+can produce a fixed width pulse triggered by a falling or rising edge of 
+an input signal. The pulse width is set using a variable called `period`.
+
+The code includes the following components:
+
+1. Input pin (IN_SWITCH) for detecting the trigger edge, which can be set 
+as either a rising or falling edge.
+2. Output pin (OUTPUT_PIN) for controlling the LED state.
+3. A pulse timer (pulsewidth) that is triggered when an edge is detected 
+and the pulse width is set by the `period` variable.
+4. A debounce delay (DEBOUNCE_DLY) to reduce multiple triggerings of the 
+pulse timer due to noise or other external factors.
+5. A map function (MAP_MIN, MAP_MAX) to map the potentiometer value to a 
+useful range for setting the `period` variable.
+
+The code first initializes the input and output pins, sets the analog read
+time to 6.5uS, and defines some constants and variables. It then enters a 
+loop where it reads the input pin, detects edges, and triggers the pulse 
+timer if an edge is detected and the `period` variable has been set. The 
+pulse width is determined by the `period` variable, and the code checks 
+for changes in the potentiometer value and updates the `period` variable 
+accordingly.
+
+Overall, this code seems to be designed to create a simple pulse generator
+that can be controlled by an external input signal and can produce a fixed
+width pulse with a set period.```
+
+***BINGO!***
+
 ## News 20240109
 
 Great news everybody! The code works! Below is a screenshot of my logic analyser traces for input (top trace), a 20% duty cycle square wave and default falling edge trigger input, while the output (bottom trace) shows a width constrained, falling edge output that isn't retriggered until the input has gone high, then fallen again. Perfect!
