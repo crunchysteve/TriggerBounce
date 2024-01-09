@@ -30,7 +30,7 @@ Doing the same thing directly with Ollama in the command line with ```ollama run
 ```The code includes the following components:```<br />
 
 ```1. Input pin (IN_SWITCH) for detecting the trigger edge, which can be set as either a rising or falling edge.```<br />
-```2. Output pin (OUTPUT_PIN) for controlling the LED state.```
+```2. Output pin (OUTPUT_PIN) for controlling the LED state.```<br />
 ```3. A pulse timer (pulsewidth) that is triggered when an edge is detected and the pulse width is set by the 'period' variable.```<br />
 ```4. A debounce delay (DEBOUNCE_DLY) to reduce multiple triggerings of the pulse timer due to noise or other external factors.```<br />
 ```5. A map function (MAP_MIN, MAP_MAX) to map the potentiometer value to a useful range for setting the `period` variable.```<br />
