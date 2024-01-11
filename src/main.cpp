@@ -14,7 +14,7 @@
 #include <Arduino.h>
 #include <Chrono.h>   //  Uses the amazing Chrono library by Sofian Audry and 
                       //  Thomas Ouellet Fredericks:- https://github.com/SofaPirate/Chrono/
-#include <EdgieD.h>     //  Crunchysteve:- https://github.com/crunchysteve/EdgieD/
+#include <EdgieD.h>   //  Crunchysteve:- https://github.com/crunchysteve/EdgieD/
 #include <data.h>     //  Program data, declarations, constants and variables
 
 Chrono pulsewidth;
@@ -43,32 +43,24 @@ void loop(){
   if(IN_SWITCH){inEdge = false;} else {inEdge = true;}    //  Set input edge.
   if(OUT_SWITCH){outEdge = false;} else {outEdge = true;} //  Set output edge.
 
-  //  Read input, as per switches, and detect a triggering edge.
-  bool input;                             
-  if(inEdge){                             //  Get edge state of INPUT_PIN...
-    input = digitalRead(INPUT_PIN);       //  (default ->) for rising edge or...
-  } else {
-    input = !digitalRead(INPUT_PIN);      //  invert logic for falling edge.
-  }
+  //  Read input
+  bool input = digitalRead(INPUT_PIN);
 
-  //  Internal logic only detects rising edges, hence above "if/else."
+  //  detect selected inEdge && timer not running state
   if(edge.detect(input,inEdge) && !pulsewidth.isRunning()){
-                                  //  ^ Detect any edge and act only if timer is stopped.
-    pulseState = inEdge;                  //  then trigger LED state and...
-    // triggered = true;                  //  timer is triggered
-    pulsewidth.start();                   //  start the pulse timer.
-    delay(DEBOUNCE_DLY);                  //  default debounce delay
+    pulseState = inEdge;                  //  set pulseState
+    pulsewidth.start();                   //  start pulsewidth timer.
+    delay(DEBOUNCE_DLY);                  //  wait for default debounce delay
   }
 
   if(pulsewidth.hasPassed(period) && pulsewidth.isRunning()){   
                                           //  detect timer if triggered is HIGH
     pulseState = !inEdge;                     //  if above is true, turn off pulse and...
-    // triggered = false;                    //  timer is no longer triggered, so...
     pulsewidth.stop();                    //  stop the timer
   }
 
   //  Convert internal logic to rising or falling edge, as per switches.
-  if(outEdge){
+  if(outEdge == inEdge){
     digitalWrite(OUTPUT_PIN,pulseState);       //  (default ->) Write LED state to OUTPUT_PIN for "period" mS
   } else {
     digitalWrite(OUTPUT_PIN,!pulseState);      //  Write LED invert-state to OUTPUT_PIN for "period" mS.

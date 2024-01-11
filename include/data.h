@@ -27,7 +27,6 @@ bool      outEdge      = true;            //  "true" = rising edge, "false" = fa
 
 bool      pulseState   = LOW;             //  Variable sets output value at given trigger states
 bool      testCon      = false;           //  Variable to store last input state
-bool      triggered    = false;           //  Variable to store whether the pulse has been triggered
 
 //  32 bit, unsigned timing integers (eg unsigned long values but use fewer characters to declare)
 uint32_t  rightNow     =   0;             //  Set pulse width timer comparison variable
