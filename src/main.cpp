@@ -14,9 +14,11 @@
 #include <Arduino.h>
 #include <Chrono.h>   //  Uses the amazing Chrono library by Sofian Audry and 
                       //  Thomas Ouellet Fredericks:- https://github.com/SofaPirate/Chrono/
+#include <EdgieD.h>     //  Crunchysteve:- https://github.com/crunchysteve/EdgieD/
 #include <data.h>     //  Program data, declarations, constants and variables
 
 Chrono pulsewidth;
+Edge edge;
 
 void setup(){
   Serial.begin(115200);
@@ -50,22 +52,18 @@ void loop(){
   }
 
   //  Internal logic only detects rising edges, hence above "if/else."
-  if(input != testCon && !triggered){                   //  Detect any edge and act only...
-                                          //  if timer is stopped.
-    if(input == HIGH && !pulseState){     //  Act only for a rising edge AND...
-                                          //  if LED state is not triggered...
-      pulseState = HIGH;                  //  then trigger LED state and...
-      triggered = true;                   //  timer is triggered
-      pulsewidth.start();                 //  start the pulse timer.
-    }
-    testCon = input;                      //  Store input as testCon for all 
-                                          //  detected edges.
+  if(edge.detect(input,inEdge) && !pulsewidth.isRunning()){
+                                  //  ^ Detect any edge and act only if timer is stopped.
+    pulseState = inEdge;                  //  then trigger LED state and...
+    // triggered = true;                  //  timer is triggered
+    pulsewidth.start();                   //  start the pulse timer.
     delay(DEBOUNCE_DLY);                  //  default debounce delay
   }
 
-  if(pulsewidth.hasPassed(period) && triggered){   //  detect timer if triggered is HIGH
-    pulseState = LOW;                     //  if above is true, turn off pulse and...
-    triggered = false;                    //  timer is no longer triggered, so...
+  if(pulsewidth.hasPassed(period) && pulsewidth.isRunning()){   
+                                          //  detect timer if triggered is HIGH
+    pulseState = !inEdge;                     //  if above is true, turn off pulse and...
+    // triggered = false;                    //  timer is no longer triggered, so...
     pulsewidth.stop();                    //  stop the timer
   }
 
@@ -76,10 +74,9 @@ void loop(){
     digitalWrite(OUTPUT_PIN,!pulseState);      //  Write LED invert-state to OUTPUT_PIN for "period" mS.
   }
 
-  //  If potentiometer state has changed, set new period.
-  //  Get potentiometer value, map to useful range and...
+  //  Get potentiometer value and map output range from 20mS to 1043 mS
   uint32_t potRead = map(analogRead(POT_PIN),POT_MIN,POT_MAX,MAP_MIN,MAP_MAX);
-                                               //  (^ map output range = 20 to 1043 mS)
+                                               //  (^)
   //  if potentiometer map value different, update period value.
   if(period != potRead) period = potRead;
 }
