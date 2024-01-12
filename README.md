@@ -4,29 +4,25 @@ filthynoisesmusic@gmail.com
     
 A Eurorack trigger pulse width limiter, based on an Arduino nano. (Will work with most Arduino and related MCUs, as it's pure C) It takes a falling-edge trigger input and repeats (bounces) a finite width, falling edge pulse to the output, regardless of the width of the input pulse. Now adapted to PlatformIO, such that, if you wish to use it with ArduinoIDE, you will need to change ```src/triggerBounce.cpp``` to ```triggerBounce/triggerBounce.ino``` after downloading/cloning *and* you may need to remove the ```#include "Arduino.h"``` line from the beginning of the ```.ino``` file.
 
-It now also relies on my edge detection library, [Edgie.D](https://github.com/crunchysteve/EdgieD), rather than local code. This library now also gives you two, predefined macros, ```Rising``` and ```Falling```, their values equal ```true``` and ```false```, respectively, but make for more readable code.
+It now also relies on my edge detection library, [Edgie.D](https://github.com/crunchysteve/EdgieD), rather than local code. This library now also gives you two, predefined macros, ```Rising``` and ```Falling```, their values equal ```true``` and ```false```, respectively, but make for more readable code. From main.cpp...
+```C++
+    if(digitalRead(IN_SWITCH)){inEdge = Falling;} else {inEdge = Rising;}
+```
+...to use a switch to choose detection of a rising or falling edge.
 
-TriggerBounce is a Eurorack trigger pulse width limiter, based on an Arduino nano. (Will work with most Arduino and related MCUs, as it's pure C) It takes a falling-edge trigger input and repeats (bounces) a finite width, falling edge pulse to the output, regardless of the width of the input pulse. It cannot be retriggered until the input trigger is released and retriggered.
-
-The triggerBounce.cpp file is a generalised, non retriggerable pulsewidth constrainer, called ```triggerBounce.ino```, that allows for optional polarity switches to set a rising or falling edge input and separate rising or falling edge output, as well as using analog input A0 to read a pot and map period to between 20mS and 800mS. You can change the mapping vales to longer or shorter amounts, if needed.
+The main code file is a generalised, non retriggerable pulsewidth constrainer that allows for optional polarity switches to set a ```Rising``` or ```Falling``` edge input as well as ```Rising``` or ```Falling``` edge output, as well as using analog input A0 to read a pot and map period to between 20mS and 800mS. You can change the mapping vales to longer or shorter amounts, if needed.
 
 All three versions run on a basic circuit like below, but the generalised one will default to rising edge input and output, as well as 26mS, if no switches and no pot are added to the appropriate pins.
 
 <img width="912" alt="triggerBounce" src="./img/triggerBounce.png">
-Above is the circuit diagram for triggerBounce.ino projects. Add switches to pins D4 (input polarity) and D7 (output polarity), wired to be open to select rising edge and closed (grounded) to select falling edge, then add a 50kΩ potentiometer with low to ground, high to 5V and wiper to A0 to set the pulsewidth period. Or, just build it without, and preset your preferred values in the declarations and variable initialisations. As you can see from the waveforms, when the yellow trace (input) falls (falling edge), this triggers a shorter descending pulse (green) on the output. This pulse doesn't retrigger until another falling edge on the input. The risingTriggerBounce.ino project would show positive going pulses on the traces.
+Above is a basic circuit diagram for TriggerBounce projects. Add switches to pins D4 (input polarity) and D7 (output polarity), wired to be open to select rising edge and closed (grounded) to select falling edge, then add a 50kΩ potentiometer with low to ground, high to 5V and wiper to A0 to set the pulsewidth period. Or, just build it without, and preset your preferred values in the declarations and variable initialisations. As you can see from the waveforms, when the yellow trace (input) falls (falling edge), this triggers a shorter descending pulse (green) on the output. This pulse doesn't retrigger until another falling edge on the input. The risingTriggerBounce.ino project would show positive going pulses on the traces.
 
-TriggerBounce uses the Chrono library, by Sofian Audry and Thomas Ouellet Fredericks. Find it at [https://github.com/SofaPirate/Chrono](https://github.com/SofaPirate/Chrono), load it into ArduinoIDE with the Library Manager or load it in VSCode/PlatformIO via your project's platformio.ini file.
+TriggerBounce uses the Chrono library, by Sofian Audry and Thomas Ouellet Fredericks. Find it at [https://github.com/SofaPirate/Chrono](https://github.com/SofaPirate/Chrono) or in the Arduino Library manager, load it into ArduinoIDE with the Library Manager or load it in VSCode/PlatformIO via your project's platformio.ini file. As mentioned above, it also now uses my EdgieD library, which can be loaded the same way as Chrono.
 
-My vscode code complition assistant, Twinny, using an offline AI, Ollama, describes the function of tho code thus...
+My vscode code completion assistant, Ollama, running codellama:7b-instruct, from this prompt...
+```ollama run llama2 "Summarize this file: $(cat /Users/steve/GitHub/TriggerBounce/TriggerBounce/src/main.cpp)"```
 
-```...you're using the Chrono library to measure the time between trigger events and control the LED state. The setup function configures the input pins, sets up the Chrono timer, and starts it. The loop function then reads the potentiometer and updates the period value if it changes. If the pulsewidth has passed since the last trigger event and the LED is on, the code turns it off and stops the timer. Otherwise, it simply waits for the next trigger event to occur.```
-
-```The input polarity switches are used to determine whether the rising or falling edge of the input signal should be counted as a trigger. The output polarity switches are used to determine whether the LED is controlled by the rising or falling edge of the pulsewidth timer...```
-
-Of course, I'm using the "LED state" (as Twinny called it) to control pin 13 because that gives an easy, onboard visual display of whether the output has been triggered. (An off-flash, or "blink.") I'd seriously love it if I could give Ollama read-only access to code files via Twinny. If anybody knows of a way to do this with Tinny in PlatformIO, please open an issue! Otherwise, copying and pasting the code into Twinny's chat box works. Don't ask Ollama to describe your code in the command line, with a file path, the app "trips balls," making up stuff about all sorts of crazy apps.
-
-Doing the same thing directly with Ollama in the command line with ```ollama run llama2 "Summarize this file: $(cat /Users/steve/GitHub/TriggerBounce/TriggerBounce/src/main.cpp)"``` renders...
-
+renders...
 ```...Arduino code for creating a pulse generator that can produce a fixed width pulse triggered by a falling or rising edge of an input signal. The pulse width is set using a variable called `period`.```<br />
 
 ```The code includes the following components:```<br />
@@ -41,13 +37,13 @@ Doing the same thing directly with Ollama in the command line with ```ollama run
 
 ```Overall, this code seems to be designed to create a simple pulse generator that can be controlled by an external input signal and can produce a fixed width pulse with a set period.```<br />
 
-***BINGO!***
-
-Guess I know how I'm going to do code analysis ```:-)``` Twinny's code completion is OK, but slow. Twinny's instruction chatbot? Meh. I'll use the code completion because it's cheaper than GitHub Copilot. I'll use the terminal and Ollama for review and gudance. Yeah, I'm finding my way around new tools, but feel free to use the second AI summary, it's ***EXACTLY*** what I wanted to achieve.
+***BINGO!*** What it says on the box.
 <hr />
 
-## News 20240109
+## News 20240112
+So, since first uploading (20240109), I've included my own edge detection/state change library, EdgieD, which immediately uncovered more bugs, several lengthy code reviews (my eyes hurt) and several incremental "fixes" (that fixed nothing) so, what's here now builds and will be hardware tested soon. That is all. I'm a workbench tinkerer, not a pro. I claim to "code a little", I'd never claim to be a hacker, more of a hack, really.
 
+## News 20240109
 Great news everybody! The code works! Below is a screenshot of my logic analyser traces for input (top trace), a 20% duty cycle square wave and default falling edge trigger input, while the output (bottom trace) shows a width constrained, falling edge output that isn't retriggered until the input has gone high, then fallen again. Perfect!
 ![Test results on my logic analyser.](https://github.com/crunchysteve/TriggerBounce/assets/46626696/32e34c1d-273d-4641-a9f4-6fea1dc45a39)
 
