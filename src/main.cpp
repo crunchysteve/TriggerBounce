@@ -29,8 +29,9 @@ void setup(){
                                           //  (Also reduces accuracy, but not entirely needed for
                                           //  a potentiometer read to set the pulsewidth.)
   pinMode(IN_SWITCH,INPUT_PULLUP);        //  Input polarity switch set as INPUT_PULLUP)
-  pinMode(INPUT_PIN, INPUT_PULLUP);       //  set trigger input MODE as INPUT_PULLUP
   pinMode(OUT_SWITCH,INPUT_PULLUP);       //  Output polarity switch set as INPUT_PULLUP)
+
+  pinMode(INPUT_PIN, INPUT_PULLUP);       //  set trigger input MODE as INPUT_PULLUP
   pinMode(OUTPUT_PIN, OUTPUT);            //  output setup as OUTPUT
     //  IN_SWITCH and OUT_SWITCH set the input and/or output active state polarities,
     //  as rising edge (default) or falling edge. Can be individually set with 
@@ -42,33 +43,34 @@ void loop(){
   //  Set edge detection preference from switch inputs.
   if(IN_SWITCH){inEdge = false;} else {inEdge = true;}    //  Set input edge.
   if(OUT_SWITCH){outEdge = false;} else {outEdge = true;} //  Set output edge.
+  //  If no switches used, inEdge defaults to Rising
 
   //  Read input
   bool input = digitalRead(INPUT_PIN);
 
-  //  detect selected inEdge && timer not running state
+  //  detect selected inEdge && if timer not running
   if(edge.detect(input,inEdge) && !pulsewidth.isRunning()){
-    pulseState = inEdge;                  //  set pulseState
+    pulseState = inEdge;                  //  set pulseState to selected edge
     pulsewidth.start();                   //  start pulsewidth timer.
     delay(DEBOUNCE_DLY);                  //  wait for default debounce delay
   }
 
+  //  detect if pulsewidth has elapsed only if timer is timing
   if(pulsewidth.hasPassed(period) && pulsewidth.isRunning()){   
-                                          //  detect timer if triggered is HIGH
-    pulseState = !inEdge;                     //  if above is true, turn off pulse and...
+    pulseState = !inEdge;                 //  if above is true, turn off pulse and...
     pulsewidth.stop();                    //  stop the timer
   }
 
-  //  Convert internal logic to rising or falling edge, as per switches.
-  if(outEdge == inEdge){
-    digitalWrite(OUTPUT_PIN,pulseState);       //  (default ->) Write LED state to OUTPUT_PIN for "period" mS
+  //  Write pulseState to OUTPUT_PIN correcting for selected output state
+  if(outSwitch){
+    digitalWrite(OUTPUT_PIN,pulseState);  //  output is input edge leading
   } else {
-    digitalWrite(OUTPUT_PIN,!pulseState);      //  Write LED invert-state to OUTPUT_PIN for "period" mS.
+    digitalWrite(OUTPUT_PIN,!pulseState); //  output is opposite edge leading
   }
-
-  //  Get potentiometer value and map output range from 20mS to 1043 mS
+ 
+  //  Get potentiometer value and map output  to a range from 20mS to 1043mS
   uint32_t potRead = map(analogRead(POT_PIN),POT_MIN,POT_MAX,MAP_MIN,MAP_MAX);
-                                               //  (^)
-  //  if potentiometer map value different, update period value.
+  
+  //  if potentiometer map value different to period, update period value.
   if(period != potRead) period = potRead;
 }
