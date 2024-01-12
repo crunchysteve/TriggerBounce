@@ -41,8 +41,8 @@ void setup(){
 
 void loop(){
   //  Set edge detection preference from switch inputs.
-  if(IN_SWITCH){inEdge = false;} else {inEdge = true;}    //  Set input edge.
-  if(OUT_SWITCH){outEdge = false;} else {outEdge = true;} //  Set output edge.
+  if(digitalRead(IN_SWITCH)){inEdge = Falling;} else {inEdge = Rising;}    //  Set input edge.
+  if(digitalRead(OUT_SWITCH)){outEdge = Falling;} else {outEdge = Rising;} //  Set output edge.
   //  If no switches used, inEdge defaults to Rising
 
   //  Read input
@@ -62,10 +62,10 @@ void loop(){
   }
 
   //  Write pulseState to OUTPUT_PIN correcting for selected output state
-  if(outSwitch){
+  if(outEdge){
     digitalWrite(OUTPUT_PIN,pulseState);  //  output is input edge leading
   } else {
-    digitalWrite(OUTPUT_PIN,!pulseState); //  output is opposite edge leading
+    digitalWrite(OUTPUT_PIN,!pulseState); //  output is opposite input edge leading
   }
  
   //  Get potentiometer value and map output  to a range from 20mS to 1043mS
