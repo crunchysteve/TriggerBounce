@@ -20,22 +20,30 @@ Above is a basic circuit diagram for TriggerBounce projects. Add switches to pin
 TriggerBounce uses the Chrono library, by Sofian Audry and Thomas Ouellet Fredericks. Find it at [https://github.com/SofaPirate/Chrono](https://github.com/SofaPirate/Chrono) or in the Arduino Library manager, load it into ArduinoIDE with the Library Manager or load it in VSCode/PlatformIO via your project's platformio.ini file. As mentioned above, it also now uses my EdgieD library, which can be loaded the same way as Chrono.
 
 My vscode code completion assistant, Ollama, running codellama:7b-instruct, from this prompt...
-```ollama run llama2 "Summarize this file: $(cat /Users/steve/GitHub/TriggerBounce/TriggerBounce/src/main.cpp)"```
+```cli
+    ollama run llama2 "Summarize this file: $(cat /Users/steve/GitHub/TriggerBounce/TriggerBounce/src/main.cpp)
+```</br>
 
 renders...
-```...Arduino code for creating a pulse generator that can produce a fixed width pulse triggered by a falling or rising edge of an input signal. The pulse width is set using a variable called `period`.```<br />
+```cli
+    ...Arduino code for creating a pulse generator that can produce a fixed width pulse triggered by a falling or rising edge of an input signal. The pulse width is set using a variable called `period`.
 
-```The code includes the following components:```<br />
+    The code includes the following components:
 
-```1. Input pin (IN_SWITCH) for detecting the trigger edge, which can be set as either a rising or falling edge.```<br />
-```2. Output pin (OUTPUT_PIN) for controlling the LED state.```<br />
-```3. A pulse timer (pulsewidth) that is triggered when an edge is detected and the pulse width is set by the 'period' variable.```<br />
-```4. A debounce delay (DEBOUNCE_DLY) to reduce multiple triggerings of the pulse timer due to noise or other external factors.```<br />
-```5. A map function (MAP_MIN, MAP_MAX) to map the potentiometer value to a useful range for setting the `period` variable.```<br />
+    1. Input pin (IN_SWITCH) for detecting the trigger edge, which can be set as either a rising or falling edge.
+    2. Output pin (OUTPUT_PIN) for controlling the LED state.
 
-```The code first initializes the input and output pins, sets the analog read time to 6.5uS, and defines some constants and variables. It then enters a loop where it reads the input pin, detects edges, and triggers the pulse timer if an edge is detected and the 'period' variable has been set. The pulse width is determined by the 'period' variable, and the code checks for changes in the potentiometer value and updates the 'period' variable accordingly.```<br />
+    3. A pulse timer (pulsewidth) that is triggered when an edge is detected and the pulse width is set by the 'period' variable.
 
-```Overall, this code seems to be designed to create a simple pulse generator that can be controlled by an external input signal and can produce a fixed width pulse with a set period.```<br />
+    4. A debounce delay (DEBOUNCE_DLY) to reduce multiple triggerings of the pulse timer due to noise or other external factors.
+
+    5. A map function (MAP_MIN, MAP_MAX) to map the potentiometer value to a useful range for setting the `period` variable.
+
+    The code first initializes the input and output pins, sets the analog read time to 6.5uS, and defines some constants and variables. It then enters a loop where it reads the input pin, detects edges, and triggers the pulse timer if an edge is detected and the 'period' variable has been set. The pulse width is determined by the 'period' variable, and the code checks for changes in the potentiometer value and updates the 'period' variable accordingly.
+
+    Overall, this code seems to be designed to create a simple pulse generator that can be controlled by an external input signal and can produce a fixed width pulse with a set period.```
+```
+<br />
 
 ***BINGO!*** What it says on the box.
 <hr />
