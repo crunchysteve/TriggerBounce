@@ -4,7 +4,7 @@ filthynoisesmusic@gmail.com
     
 A Eurorack trigger pulse width limiter, based on an Arduino nano. (Will work with most Arduino and related MCUs, as it's pure C) It takes a falling-edge trigger input and repeats (bounces) a finite width, falling edge pulse to the output, regardless of the width of the input pulse. Now adapted to PlatformIO, such that, if you wish to use it with ArduinoIDE, you will need to change ```src/triggerBounce.cpp``` to ```triggerBounce/triggerBounce.ino``` after downloading/cloning *and* you may need to remove the ```#include "Arduino.h"``` line from the beginning of the ```.ino``` file.
 
-It now also relies on my edge detection library, [Edgie.D](https://github.com/crunchysteve/EdgieD), rather than local code. This library now also gives you two, predefined macros, ```Rising``` and ```Falling```, their values equal ```true``` and ```false```, respectively, but make for more readable code. From main.cpp...
+It now also relies on my edge detection library, [Edgie.D](https://github.com/crunchysteve/EdgieD), rather than local code. This library gives you two, predefined macros, ```Rising``` and ```Falling```, their values equal ```true``` and ```false```, respectively, but make for more readable code. From main.cpp...
 ```C++
     if(digitalRead(IN_SWITCH)){inEdge = Falling;} else {inEdge = Rising;}
 ```
